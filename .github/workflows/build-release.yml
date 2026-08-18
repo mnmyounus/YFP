@@ -1,0 +1,133 @@
+name: Build and Release APK
+
+# Fires only on version tags (e.g. v1.0.0, v1.2.3-beta) being pushed — not on
+# every push to a branch — so a signed release build only ever happens as a
+# deliberate, explicit act (cutting a tag), not accidentally on routine commits.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+# Least-privilege token scope: this workflow only needs to create a Release
+# and upload an asset to it, so it gets exactly that and nothing more.
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build, sign, and publish release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Full history isn't needed for a build; fetch-depth: 0 would only
+          # matter if release notes were auto-generated from commit log
+          # ranges, which this workflow doesn't do (it uses the tag name and
+          # an optional CHANGELOG entry instead — see "Prepare release notes"
+          # below), so the default shallow checkout is enough and faster.
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android command-line tools (for apksigner)
+        uses: android-actions/setup-android@v3
+
+      # This repo does not commit gradle/wrapper/gradle-wrapper.jar as a
+      # binary (increasingly discouraged for supply-chain-verification
+      # reasons — a jar is much harder for a human reviewer to audit in a
+      # PR diff than the plaintext gradle-wrapper.properties this repo does
+      # commit). Instead, a system-installed Gradle (via gradle/actions,
+      # which itself pins and checksum-verifies the Gradle distribution it
+      # installs) regenerates the wrapper jar to match the version pinned
+      # in gradle-wrapper.properties, then every subsequent step uses
+      # ./gradlew as normal like any standard Gradle project's CI.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Generate Gradle wrapper jar
+        run: gradle wrapper --gradle-version 8.7
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Extract version name from tag
+        id: version
+        # Strip the leading "v" so versionName-style output (e.g. "1.0.0")
+        # is available separately from the raw tag (e.g. "v1.0.0") — the
+        # release title uses the raw tag, filenames use the stripped form.
+        run: |
+          RAW_TAG="${GITHUB_REF_NAME}"
+          VERSION_NAME="${RAW_TAG#v}"
+          echo "raw_tag=${RAW_TAG}" >> "$GITHUB_OUTPUT"
+          echo "version_name=${VERSION_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Build signed release APK
+        env:
+          # These four secrets must be configured under
+          # Settings → Secrets and variables → Actions → Repository secrets
+          # before pushing a release tag. See README.md "Release signing
+          # setup" for how to generate and base64-encode a keystore.
+          #
+          # app/build.gradle.kts reads these same env var names directly
+          # (see signingConfigs.release) and only attaches a signing config
+          # to the release build type if all four are present and non-blank
+          # — so if a secret is missing, this step still produces an APK,
+          # it's just unsigned, and the "Verify APK was signed" step below
+          # catches that explicitly rather than silently publishing an
+          # unsigned artifact as if it were a normal release.
+          YFP_KEYSTORE_BASE64: ${{ secrets.YFP_KEYSTORE_BASE64 }}
+          YFP_KEYSTORE_PASSWORD: ${{ secrets.YFP_KEYSTORE_PASSWORD }}
+          YFP_KEY_ALIAS: ${{ secrets.YFP_KEY_ALIAS }}
+          YFP_KEY_PASSWORD: ${{ secrets.YFP_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Locate built APK
+        id: apk
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/release -maxdepth 1 -name "*.apk" | head -n1)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::No APK found under app/build/outputs/apk/release — build must have failed silently."
+            exit 1
+          fi
+          echo "path=${APK_PATH}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify APK was signed
+        # A release build attached to a public GitHub Release is expected to
+        # be installable by end users, which requires a valid signature —
+        # fail loudly here rather than publishing an unsigned APK that would
+        # only surface as a confusing "app not installed" error for whoever
+        # downloads it. `apksigner` ships with the Android command-line
+        # tools set up earlier in this job.
+        run: |
+          apksigner verify --print-certs "${{ steps.apk.outputs.path }}"
+
+      - name: Rename APK for release asset
+        id: rename
+        run: |
+          DEST="YFP-${{ steps.version.outputs.version_name }}.apk"
+          cp "${{ steps.apk.outputs.path }}" "$DEST"
+          echo "path=${DEST}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.raw_tag }}
+          name: "YFP ${{ steps.version.outputs.raw_tag }}"
+          body: |
+            Automated release build of YFP (Your Files Protector) by MNM Younus.
+
+            **Install note:** this APK is signed with the project's release
+            key. If you previously installed a debug build, uninstall it
+            first — Android will not let you install a release-signed APK
+            over a debug-signed one with the same applicationId.
+
+            100% offline · Zero ads · Zero tracking · No `INTERNET` permission.
+          files: ${{ steps.rename.outputs.path }}
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.raw_tag, '-') }}
