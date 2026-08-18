@@ -1,0 +1,35 @@
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Local configuration
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.DS_Store
+
+# Keystores — NEVER commit a real signing keystore. CI reads it from the
+# YFP_KEYSTORE_BASE64 secret instead (see README.md "Release signing setup").
+*.jks
+*.keystore
+*.jks.b64
+
+# Build outputs
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Log/generated
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Wrapper jar is intentionally NOT committed — CI regenerates it from
+# gradle-wrapper.properties (see .github/workflows/build-release.yml).
+# If you prefer to commit it for offline/local reproducibility, remove the
+# line below and run `gradle wrapper --gradle-version 8.7` once locally.
+gradle/wrapper/gradle-wrapper.jar
