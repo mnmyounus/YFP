@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YFP</string>
+    <string name="tagline_offline_secure">100% offline · No ads · No tracking</string>
+
+    <!-- Target selection -->
+    <string name="label_select_target">Select target storage</string>
+    <string name="target_selected_format">Selected: %1$s</string>
+    <string name="target_needs_permission_format">%1$s selected — grant folder access to continue</string>
+    <string name="target_custom_folder">Custom folder</string>
+    <string name="button_choose_folder">Choose Folder…</string>
+    <string name="button_grant_access_to">Grant Access to %1$s…</string>
+    <string name="toast_folder_selection_cancelled">No folder selected</string>
+    <string name="toast_grant_access_first">Please grant folder access before starting</string>
+
+    <!-- Pattern selection -->
+    <string name="label_overwrite_pattern">Overwrite pattern</string>
+    <string name="pattern_pseudo_random_label">Pseudo-Random</string>
+    <string name="pattern_pseudo_random_description">Non-repeating data pattern. Slightly slower, thorough.</string>
+    <string name="pattern_zero_fill_label">Zero-Fill</string>
+    <string name="pattern_zero_fill_description">All-zero pattern. Fastest option.</string>
+
+    <string name="disclaimer_not_forensic_grade">YFP overwrites free space to prevent common recovery tools from restoring deleted files. It does not make forensic-grade claims (e.g. DoD 5220.22-M) — on flash storage, wear-leveling means no consumer tool can guarantee every physical cell is touched.</string>
+
+    <!-- Controls -->
+    <string name="action_start_wipe">Start Wipe</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_cancel_delete">Cancel &amp; Delete Dummy Files</string>
+    <string name="action_start">Start</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="dialog_confirm_start_title">Start overwrite?</string>
+    <string name="dialog_confirm_start_message">YFP will fill up to %1$d%% of free space on %2$s with dummy files, then delete them. This can take a while depending on storage speed and size. You can pause or cancel at any time.</string>
+    <string name="dialog_confirm_delete_title">Delete dummy files?</string>
+    <string name="dialog_confirm_delete_message">This will stop the current wipe (if running) and immediately delete all dummy files YFP has created, freeing the space back up.</string>
+
+    <!-- Status -->
+    <string name="status_idle">Ready</string>
+    <string name="status_running">Overwriting free space…</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_completed">Wipe complete</string>
+    <string name="status_completed_storage_limit">Wipe stopped — storage ran lower than expected. Files written so far are safe to delete below.</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_failed_format">Failed: %1$s</string>
+
+    <!-- Progress -->
+    <string name="progress_percent_format">%1$d%%</string>
+    <string name="progress_written_format">%1$s / %2$s written</string>
+    <string name="progress_speed_format">%1$.1f MB/s</string>
+    <string name="label_speed">SPEED</string>
+    <string name="label_eta">TIME REMAINING</string>
+    <string name="eta_calculating">Calculating…</string>
+
+    <!-- TV-specific -->
+    <string name="tv_target_internal_format">Internal Storage — %1$s free</string>
+    <string name="tv_target_removable_format">%1$s — %2$s free</string>
+
+    <!-- Utility links -->
+    <string name="action_check_for_updates">Check for Updates</string>
+    <string name="action_contact_developer">Contact Developer</string>
+    <string name="github_releases_url" translatable="false">https://github.com/mnmyounus/yfp/releases</string>
+    <string name="developer_contact_email" translatable="false">mnmyounus@proton.me</string>
+    <string name="email_subject_contact_developer">YFP Support Request</string>
+    <string name="toast_no_browser_found">No browser app found</string>
+    <string name="toast_no_email_app_found">No email app found</string>
+
+    <string name="footer_credit">YFP by MNM Younus</string>
+
+    <!-- Notification -->
+    <string name="notification_channel_name">Wipe Progress</string>
+    <string name="notification_channel_description">Shows live progress while YFP is overwriting free space</string>
+    <string name="notification_starting">Starting…</string>
+    <string name="notification_paused_format">Paused — %1$s written (%2$d%%)</string>
+    <string name="notification_running_format">%1$s — %2$s / %3$s (%4$d%%)</string>
+    <string name="notification_completed_format">Complete — %1$s written</string>
+    <string name="notification_completed_storage_limit_format">Stopped early — %1$s written (storage ran lower than expected)</string>
+    <string name="notification_failed_format">Wipe failed: %1$s</string>
+
+</resources>

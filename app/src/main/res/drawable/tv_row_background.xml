@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        D-pad focus MUST be unmistakable since there is no cursor/hover to
+        fall back on — a user navigating by remote needs to always be able
+        to tell, at a glance, which row is currently selected. The focused
+        state below uses both a fill-color change AND a stroke, so it still
+        reads clearly for users with color-vision differences who might not
+        strongly perceive the green fill shift on its own.
+    -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tv_row_focused" />
+            <corners android:radius="8dp" />
+            <stroke android:width="3dp" android:color="@color/tv_accent" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/tv_row_default" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</selector>

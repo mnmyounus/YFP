@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        Deliberately NO android.permission.INTERNET.
+        This is a privacy guarantee, not an oversight: without this permission
+        the OS makes it impossible for this app's process to open a socket,
+        regardless of what the code tries to do. "Check for Updates" and
+        "Contact Developer" below hand off to the browser / mail app via
+        Intent, which do their own networking under their own permissions.
+    -->
+
+    <!-- Required to run the overwrite engine as a foreground service so it
+         survives the user leaving the app / screen timeout on long wipes. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- Lets the progress notification stay visible/updating (Android 13+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Legacy external storage permissions for API < 29 devices/paths where
+         Scoped Storage's SAF isn't the only route (e.g. app-external dir). -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!-- App is fully usable without a touchscreen (Android TV D-pad). -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
+    <application
+        android:name=".YfpApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:banner="@drawable/tv_banner"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.YFP"
+        android:hardwareAccelerated="true"
+        tools:targetApi="34">
+
+        <!-- Phone / tablet entry point -->
+        <activity
+            android:name=".ui.mobile.MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="unspecified">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Android TV entry point. Kept as a separate Activity (rather than
+             one Activity with runtime layout swapping) because Leanback
+             navigation/focus handling is different enough from touch that
+             sharing an Activity class leads to a tangle of "if isTv" branches
+             through lifecycle code. Both activities share the same
+             WipeViewModel and WipeService, so there is one source of truth
+             for the actual wipe logic. -->
+        <activity
+            android:name=".ui.tv.TvMainActivity"
+            android:exported="true"
+            android:banner="@drawable/tv_banner"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.YFP.Tv">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Foreground service that owns the actual file-writing loop. -->
+        <service
+            android:name=".service.WipeService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- No FileProvider is declared: the app never shares its dummy
+             files or needs a content:// URI out to another app. -->
+
+    </application>
+
+</manifest>

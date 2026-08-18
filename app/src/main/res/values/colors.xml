@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_primary">#2E7D6B</color>
+    <color name="brand_primary_dark">#1B5E4F</color>
+    <color name="brand_accent">#4FD1B5</color>
+    <color name="destructive_red">#C0392B</color>
+
+    <color name="tv_background">#0D1512</color>
+    <color name="tv_text_primary">#FFFFFF</color>
+    <color name="tv_text_secondary">#A8B5B0</color>
+    <color name="tv_accent">#4FD1B5</color>
+    <color name="tv_divider">#2A3830</color>
+    <color name="tv_row_default">#1A2620</color>
+    <color name="tv_row_focused">#2E7D6B</color>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme reuses the same brand palette; Material3 DayNight theme
+         handles surface/background swaps automatically. Kept as an explicit
+         override file (rather than relying purely on theme attrs) so the
+         accent stays legible against a dark background specifically. -->
+    <color name="brand_primary">#4FD1B5</color>
+    <color name="brand_primary_dark">#2E7D6B</color>
+</resources>

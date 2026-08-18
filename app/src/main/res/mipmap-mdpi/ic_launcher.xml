@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Legacy (pre-API26) launcher icon fallback. This XML file lives in a
+    mipmap-<density> bucket but its content is a bitmap/vector *reference*,
+    not raw drawable content — Android resolves @mipmap/ic_launcher through
+    this file to the vector below regardless of which density bucket was
+    picked, which is fine here since the underlying asset is a vector
+    (density-independent) rather than a raster PNG that would actually need
+    distinct per-density files.
+-->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/ic_launcher_legacy" />

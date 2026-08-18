@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tv_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="48dp">
+
+        <!-- Left column: title + status/progress (non-interactive display) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="48dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:textColor="@color/tv_text_primary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/tagline_offline_secure"
+                android:textSize="16sp"
+                android:textColor="@color/tv_text_secondary" />
+
+            <TextView
+                android:id="@+id/text_status_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/tv_text_primary"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/text_selected_target"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/tv_text_secondary"
+                android:layout_marginBottom="24dp" />
+
+            <LinearLayout
+                android:id="@+id/group_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100" />
+
+                <TextView
+                    android:id="@+id/text_progress_percent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/tv_text_primary" />
+
+                <TextView
+                    android:id="@+id/text_written_totals"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/tv_text_secondary" />
+
+                <TextView
+                    android:id="@+id/text_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/tv_accent" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Right column: all focusable D-pad controls, stacked vertically
+             so DPAD_UP/DOWN moves predictably through them in one column. -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/group_target_selection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_select_target"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/tv_text_secondary"
+                    android:layout_marginBottom="8dp" />
+
+                <Button
+                    android:id="@+id/button_target_internal"
+                    style="@style/Widget.YFP.Tv.FocusableRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp" />
+
+                <Button
+                    android:id="@+id/button_target_removable"
+                    style="@style/Widget.YFP.Tv.FocusableRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/label_overwrite_pattern"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/tv_text_secondary"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button_pattern_random"
+                        style="@style/Widget.YFP.Tv.FocusableRow"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="56dp"
+                        android:text="@string/pattern_pseudo_random_label" />
+
+                    <Button
+                        android:id="@+id/button_pattern_zero"
+                        style="@style/Widget.YFP.Tv.FocusableRow"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:layout_height="56dp"
+                        android:text="@string/pattern_zero_fill_label" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_start"
+                style="@style/Widget.YFP.Tv.PrimaryRow"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="24dp"
+                android:enabled="true"
+                android:text="@string/action_start_wipe" />
+
+            <Button
+                android:id="@+id/button_pause"
+                style="@style/Widget.YFP.Tv.PrimaryRow"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/action_pause"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/button_resume"
+                style="@style/Widget.YFP.Tv.PrimaryRow"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/action_resume"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/button_cancel_delete"
+                style="@style/Widget.YFP.Tv.FocusableRow"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/action_cancel_delete"
+                android:textColor="@color/destructive_red"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/tv_divider" />
+
+            <Button
+                android:id="@+id/button_check_updates"
+                style="@style/Widget.YFP.Tv.FocusableRow"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/action_check_for_updates" />
+
+            <Button
+                android:id="@+id/button_contact_developer"
+                style="@style/Widget.YFP.Tv.FocusableRow"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/action_contact_developer" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

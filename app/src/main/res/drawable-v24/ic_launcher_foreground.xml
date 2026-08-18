@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Adaptive icon foreground: a shield (protection) enclosing a folder
+         corner-fold shape (files) rather than a lock, so at a glance it
+         reads specifically as "file protection" rather than generic
+         security/VPN iconography. Content is inset within the safe zone
+         (roughly the center 66dp of the 108dp canvas) per adaptive icon
+         guidelines, since outer regions get cropped to the mask shape on
+         many launchers. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,20 L78,29 V50 C78,66 68,79 54,84 C40,79 30,66 30,50 V29 Z" />
+    <path
+        android:fillColor="#2E7D6B"
+        android:pathData="M54,26 L72,32.5 V50 C72,62.5 64.5,72.5 54,76.5 C43.5,72.5 36,62.5 36,50 V32.5 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M46,46 H62 C63.1,46 64,46.9 64,48 V62 C64,63.1 63.1,64 62,64 H46 C44.9,64 44,63.1 44,62 V48 C44,46.9 44.9,46 46,46 Z" />
+    <path
+        android:fillColor="#4FD1B5"
+        android:pathData="M46,46 L52,40 H62 V46 Z" />
+</vector>

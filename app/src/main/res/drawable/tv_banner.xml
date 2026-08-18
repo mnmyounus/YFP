@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android TV requires a banner (320x180dp) rather than a plain launcher
+    icon for its LEANBACK_LAUNCHER row. Built as a vector so it scales
+    cleanly across the various TV display resolutions without needing
+    separate raster exports.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <path android:fillColor="#0D1512" android:pathData="M0,0h320v180h-320z" />
+
+    <!-- Shield mark, left-aligned -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M70,40 L100,50 V85 C100,110 87,128 70,135 C53,128 40,110 40,85 V50 Z" />
+    <path
+        android:fillColor="#2E7D6B"
+        android:pathData="M70,48 L92,55.5 V85 C92,105 82,118 70,124 C58,118 48,105 48,85 V55.5 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M58,80 H82 C83.5,80 85,81.5 85,83 V103 C85,104.5 83.5,106 82,106 H58 C56.5,106 55,104.5 55,103 V83 C55,81.5 56.5,80 58,80 Z" />
+    <path
+        android:fillColor="#4FD1B5"
+        android:pathData="M58,80 L66,72 H82 V80 Z" />
+
+    <!-- Wordmark -->
+    <path android:fillColor="#FFFFFF" android:pathData="M130,75 h60 v10 h-60z" />
+    <path android:fillColor="#4FD1B5" android:pathData="M130,95 h95 v6 h-95z" />
+    <path android:fillColor="#A8B5B0" android:pathData="M130,108 h110 v5 h-110z" />
+
+</vector>
