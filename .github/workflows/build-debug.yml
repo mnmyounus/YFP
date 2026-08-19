@@ -37,6 +37,19 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      # gradle/wrapper/gradle-wrapper.jar is not committed to this repo --
+      # committing a binary jar to a project's git history is increasingly
+      # discouraged (a jar can't be reviewed in a PR diff the way the
+      # plaintext gradle-wrapper.properties this repo *does* commit can
+      # be). Without this step, gradlew has the properties file telling it
+      # which Gradle version to fetch, but not the actual
+      # GradleWrapperMain bootstrap class needed to run at all -- this
+      # step regenerates that jar from the properties file using the
+      # system Gradle already on this runner. build-release.yml performs
+      # this same step for the same reason.
+      - name: Bootstrap Gradle wrapper jar
+        run: gradle wrapper --gradle-version 8.7
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
