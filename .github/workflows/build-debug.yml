@@ -1,0 +1,116 @@
+name: Build and Publish Debug APK
+
+# Fires on every push to main -- unlike build-release.yml (which only fires
+# on an explicit version tag and needs the four YFP_KEYSTORE_* secrets
+# configured), this workflow needs no secrets at all and produces a fresh
+# build automatically on every commit. This is the intentional trade for a
+# debug build: no release-signing setup required, at the cost of not being
+# a "real" production release. See README.md "Debug builds vs. signed
+# releases" for when to use which of the two workflows in this repo.
+on:
+  push:
+    branches:
+      - main
+
+# Least-privilege token scope: this workflow only needs to create a Release
+# and upload an asset to it.
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish-debug:
+    name: Build and publish debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # The debug build type gets AGP's built-in debug signingConfig
+      # automatically -- a throwaway keystore Gradle generates and manages
+      # for you the first time it's needed, with a well-known, non-secret
+      # password. This is what makes "no signing setup" possible at all:
+      # there is nothing to configure, and nothing here reads or needs any
+      # repository secret. The trade-off (debug-signed APKs cannot be
+      # published to the Play Store, and Android treats a debug-signed and
+      # release-signed build of the same applicationId as different apps
+      # for install/upgrade purposes) is expected and fine for a build
+      # meant to be downloaded and sideloaded directly from GitHub Releases.
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Locate built APK
+        id: apk
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/debug -maxdepth 1 -name "*.apk" | head -n1)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::No APK found under app/build/outputs/apk/debug — build must have failed silently."
+            exit 1
+          fi
+          echo "path=${APK_PATH}" >> "$GITHUB_OUTPUT"
+
+      # Every push produces a new, distinctly-tagged release rather than
+      # all pushes fighting over one tag name -- short-sha keeps tags
+      # readable while still being unique per commit.
+      #
+      # PREFER ONE ROLLING "latest debug build" RELEASE INSTEAD? Replace
+      # this step's two output lines with a fixed tag instead of one
+      # derived from the commit sha:
+      #   echo "tag=latest-debug" >> "$GITHUB_OUTPUT"
+      #   echo "apk_name=YFP-latest-debug.apk" >> "$GITHUB_OUTPUT"
+      # softprops/action-gh-release automatically updates an existing
+      # release in place when tag_name matches one that already exists,
+      # so this alone is enough to get a single release that's replaced
+      # on every push instead of accumulating one per commit -- no other
+      # step needs to change.
+      - name: Build release tag and name from commit
+        id: version
+        run: |
+          SHORT_SHA="$(git rev-parse --short HEAD)"
+          echo "tag=dev-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "apk_name=YFP-debug-${SHORT_SHA}.apk" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK for release asset
+        id: rename
+        run: |
+          cp "${{ steps.apk.outputs.path }}" "${{ steps.version.outputs.apk_name }}"
+          echo "path=${{ steps.version.outputs.apk_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "YFP debug build (${{ steps.version.outputs.tag }})"
+          body: |
+            Automated **debug** build of YFP (Your Files Protector) by MNM Younus.
+
+            This build is signed with Android's standard auto-generated
+            debug key, not a real release key -- that's what makes it
+            possible to publish with zero signing setup. It installs and
+            runs exactly like a release build, but:
+            - it cannot be published to the Google Play Store as-is
+            - if you also install a *release*-signed build of this app
+              later, Android will treat the two as separate apps rather
+              than letting one upgrade the other (uninstall this one first
+              if you switch to a signed release build)
+
+            Built from commit ${{ github.sha }}.
+
+            100% offline · Zero ads · Zero tracking · No `INTERNET` permission.
+          files: ${{ steps.rename.outputs.path }}
+          draft: false
+          prerelease: true
