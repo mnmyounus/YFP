@@ -93,13 +93,19 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
+    // Provides the viewModels() property delegate (by viewModels()) and
+    // registerForActivityResult()'s ActivityResultContracts -- both
+    // MainActivity and TvMainActivity use these. This was missing from the
+    // original dependency list, which is exactly what broke the first CI
+    // build: "Unresolved reference: viewModels" at compile time, since the
+    // import statement alone doesn't pull in the artifact that defines it.
+    implementation("androidx.activity:activity-ktx:1.9.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-service:2.8.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.documentfile:documentfile:1.0.1")
-    implementation("androidx.leanback:leanback:1.0.0") // Android TV D-pad-friendly widgets
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
